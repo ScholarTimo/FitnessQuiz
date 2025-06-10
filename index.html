@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Was raubt Ihnen Ihre Energie? - Kostenloser 2-Minuten Fitness-Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .question {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question h3 {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #5a6fd8;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result-type {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .result-type h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .result-description {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .action-plan {
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .cta h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .cta-button {
+            background: white;
+            color: #28a745;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .intro-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-card {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-card">
+            <div class="header">
+                <h1>⚡ Was raubt Ihnen Ihre Energie?</h1>
+                <p class="subtitle">Kostenloser 2-Minuten Fitness-Check für vielbeschäftigte Berufstätige</p>
+                
+                <div class="intro-stats">
+                    <div class="stat">
+                        <div class="stat-number">9</div>
+                        <div>Einfache Fragen</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">2</div>
+                        <div>Minuten Zeit</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">✓</div>
+                        <div>Sofortiger Aktionsplan</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Question 1 -->
+            <div class="question active" data-question="1">
+                <h3>Wie viel Bewegung bekommen Sie täglich während der Arbeitszeit?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Ich sitze fast den ganzen Tag und stehe nur für Pausen auf</div>
+                    <div class="option" data-value="B" data-score="2">Ich gehe gelegentlich umher, aber meist nur zwischen Terminen</div>
+                    <div class="option" data-value="C" data-score="3">Ich nehme bewusst die Treppe und mache kurze Spaziergänge</div>
+                    <div class="option" data-value="D" data-score="4">Ich integriere regelmäßig Bewegung in meinen Arbeitsalltag</div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question" data-question="2">
+                <h3>Wie würden Sie Ihren Schlaf und Ihre Erholung beschreiben?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Ich schlafe schlecht und wache oft müde auf</div>
+                    <div class="option" data-value="B" data-score="2">Mein Schlaf ist okay, aber ich fühle mich selten richtig erholt</div>
+                    <div class="option" data-value="C" data-score="3">Ich schlafe meist gut, aber nicht immer ausreichend</div>
+                    <div class="option" data-value="D" data-score="4">Ich habe einen regelmäßigen, erholsamen Schlaf</div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question" data-question="3">
+                <h3>Welche Aussage trifft auf Ihre Ernährung zu?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Ich esse oft schnell zwischendurch, meist ungesunde Snacks</div>
+                    <div class="option" data-value="B" data-score="2">Meine Mahlzeiten sind unregelmäßig und oft stressbedingt</div>
+                    <div class="option" data-value="C" data-score="3">Ich achte teilweise auf gesunde Ernährung, aber nicht konsequent</div>
+                    <div class="option" data-value="D" data-score="4">Ich ernähre mich bewusst und regelmäßig gesund</div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question" data-question="4">
+                <h3>Wie sieht Ihre Morgenroutine aus?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Hektisch - ich springe aus dem Bett und hetze zur Arbeit</div>
+                    <div class="option" data-value="B" data-score="2">Etwas chaotisch, aber ich schaffe es pünktlich</div>
+                    <div class="option" data-value="C" data-score="3">Strukturiert, aber ohne Zeit für mich selbst</div>
+                    <div class="option" data-value="D" data-score="4">Ruhig und bewusst mit Zeit für persönliche Bedürfnisse</div>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question" data-question="5">
+                <h3>Wie oft fühlen Sie sich während des Tages energielos oder ausgelaugt?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Täglich, besonders am Nachmittag sacke ich regelrecht ab</div>
+                    <div class="option" data-value="B" data-score="2">Mehrmals pro Woche spüre ich deutliche Energietiefs</div>
+                    <div class="option" data-value="C" data-score="3">Gelegentlich, meist bei besonders stressigen Tagen</div>
+                    <div class="option" data-value="D" data-score="4">Selten, ich fühle mich meist energiegeladen</div>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question" data-question="6">
+                <h3>Wie gehen Sie mit Stress um?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Ich fühle mich oft überwältigt und weiß nicht, wie ich abschalten soll</div>
+                    <div class="option" data-value="B" data-score="2">Stress baut sich bei mir auf und ich finde schwer Entspannung</div>
+                    <div class="option" data-value="C" data-score="3">Ich habe einige Strategien, aber sie funktionieren nicht immer</div>
+                    <div class="option" data-value="D" data-score="4">Ich habe effektive Methoden zur Stressbewältigung</div>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question" data-question="7">
+                <h3>Wie viel Zeit haben Sie realistisch für Fitness/Sport?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Praktisch keine - mein Tag ist komplett verplant</div>
+                    <div class="option" data-value="B" data-score="2">Maximal 10-15 Minuten, wenn überhaupt</div>
+                    <div class="option" data-value="C" data-score="3">20-30 Minuten an guten Tagen</div>
+                    <div class="option" data-value="D" data-score="4">30+ Minuten täglich sind machbar</div>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question" data-question="8">
+                <h3>Was hindert Sie am meisten daran, regelmäßig Sport zu treiben?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Zeitmangel und ständige Erschöpfung</div>
+                    <div class="option" data-value="B" data-score="2">Fehlende Motivation und zu komplizierte Programme</div>
+                    <div class="option" data-value="C" data-score="3">Schwierigkeiten bei der Integration in den Alltag</div>
+                    <div class="option" data-value="D" data-score="4">Eigentlich nichts Gravierendes</div>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question" data-question="9">
+                <h3>Wie würden Sie Ihr aktuelles Energielevel beschreiben?</h3>
+                <div class="options">
+                    <div class="option" data-value="A" data-score="1">Chronisch müde und antriebslos</div>
+                    <div class="option" data-value="B" data-score="2">Oft erschöpft, besonders nach der Arbeit</div>
+                    <div class="option" data-value="C" data-score="3">Wechselhaft - mal gut, mal schlecht</div>
+                    <div class="option" data-value="D" data-score="4">Größtenteils energiegeladen und vital</div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <!-- Results will be populated by JavaScript -->
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prevBtn" onclick="changeQuestion(-1)" style="display: none;">Zurück</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="changeQuestion(1)" disabled>Weiter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 9;
+        let answers = {};
+        let totalScore = 0;
+
+        function updateProgress() {
+            const progress = (currentQuestion - 1) / totalQuestions * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showQuestion(questionNumber) {
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.querySelector(`[data-question="${questionNumber}"]`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = questionNumber > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = questionNumber === totalQuestions ? 'Ergebnis anzeigen' : 'Weiter';
+            
+            // Check if current question is answered
+            const isAnswered = answers[questionNumber] !== undefined;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            updateProgress();
+        }
+
+        function selectOption(element, questionNumber, value, score) {
+            // Remove selection from other options
+            element.parentNode.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            // Select current option
+            element.classList.add('selected');
+            
+            // Store answer
+            answers[questionNumber] = { value, score };
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function changeQuestion(direction) {
+            if (direction === 1) {
+                if (currentQuestion === totalQuestions) {
+                    showResults();
+                    return;
+                }
+                currentQuestion++;
+            } else {
+                currentQuestion--;
+            }
+            
+            showQuestion(currentQuestion);
+        }
+
+        function calculateScore() {
+            totalScore = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (answers[i]) {
+                    totalScore += answers[i].score;
+                }
+            }
+            return totalScore;
+        }
+
+        function getResultType(score) {
+            if (score <= 15) {
+                return {
+                    type: "Der Überlastete Optimierer",
+                    emoji: "🔥",
+                    description: "Sie stehen unter enormem Druck und Ihr Körper sendet klare Warnsignale. Chronische Müdigkeit und Energiemangel dominieren Ihren Alltag.",
+                    problems: [
+                        "Ständige Erschöpfung trotz Koffein",
+                        "Schwierigkeiten beim Einschlafen wegen Stress",
+                        "Unregelmäßige, hastige Mahlzeiten",
+                        "Praktisch keine Zeit für Bewegung"
+                    ],
+                    solution: "Sie brauchen ein System, das in 10 Minuten sofortige Energieschübe liefert und sich mühelos in Ihren hektischen Tag integriert."
+                };
+            } else if (score <= 25) {
+                return {
+                    type: "Der Gestresste Kämpfer",
+                    emoji: "⚡",
+                    description: "Sie kämpfen täglich gegen Müdigkeit an und spüren, dass Ihr aktueller Lebensstil nicht nachhaltig ist. Erste Burnout-Anzeichen sind spürbar.",
+                    problems: [
+                        "Energietiefs am Nachmittag",
+                        "Schwankende Motivation",
+                        "Sporadische, erfolglose Fitness-Versuche",
+                        "Stress baut sich kontinuierlich auf"
+                    ],
+                    solution: "Sie benötigen eine strukturierte, aber flexible Routine, die Ihnen hilft, auch an stressigen Tagen bei der Stange zu bleiben."
+                };
+            } else if (score <= 30) {
+                return {
+                    type: "Der Suchende Optimierer",
+                    emoji: "🎯",
+                    description: "Sie sind auf dem richtigen Weg, aber es fehlt die Konsistenz. Sie wissen, was Sie tun sollten, aber die Umsetzung im Alltag fällt schwer.",
+                    problems: [
+                        "Inkonsistente Routinen",
+                        "Gute Ansätze ohne nachhaltigen Plan",
+                        "Zeitmanagement-Herausforderungen",
+                        "Fehlende Struktur bei der Umsetzung"
+                    ],
+                    solution: "Sie brauchen einen klaren, wissenschaftlich fundierten Plan, der Ihre guten Ansätze in eine nachhaltige Routine verwandelt."
+                };
+            } else {
+                return {
+                    type: "Der Bewusste Performer",
+                    emoji: "🚀",
+                    description: "Sie haben bereits eine gute Basis und sind bewusst um Ihre Gesundheit bemüht. Jetzt geht es darum, das nächste Level zu erreichen.",
+                    problems: [
+                        "Plateaus bei Fitness und Energie",
+                        "Wunsch nach Optimierung",
+                        "Suche nach effizienten Methoden",
+                        "Zeitmangel für aufwendige Programme"
+                    ],
+                    solution: "Sie sind bereit für fortgeschrittene, zeiteffiziente Strategien, die Ihre bereits guten Grundlagen auf das nächste Level heben."
+                };
+            }
+        }
+
+        function showResults() {
+            const score = calculateScore();
+            const result = getResultType(score);
+            
+            document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+            document.querySelector('.navigation').style.display = 'none';
+            document.getElementById('progressFill').style.width = '100%';
+            
+            const resultsHTML = `
+                <div class="result-type">
+                    <h2>${result.emoji} Sie sind: ${result.type}</h2>
+                </div>
+                
+                <div class="result-description">
+                    <h3>Ihre Situation:</h3>
+                    <p>${result.description}</p>
+                    
+                    <h4 style="margin-top: 20px; color: #e74c3c;">Ihre größten Energie-Räuber:</h4>
+                    <ul style="margin-left: 20px; line-height: 1.6;">
+                        ${result.problems.map(problem => `<li>${problem}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="action-plan">
+                    <h3>🎯 Ihr personalisierter 10-Minuten Aktionsplan:</h3>
+                    <p><strong>${result.solution}</strong></p>
+                    
+                    <h4 style="margin-top: 15px;">Sofort umsetzbar heute:</h4>
+                    <ol style="margin-left: 20px; line-height: 1.6;">
+                        <li><strong>Energie-Boost (2 Min.):</strong> 20 Kniebeugen + 10 tiefe Atemzüge vor dem nächsten Termin</li>
+                        <li><strong>Stress-Reset (3 Min.):</strong> Kurzer Spaziergang oder Dehnung zwischen Meetings</li>
+                        <li><strong>Abend-Routine (5 Min.):</strong> Handy weg, 5 Min. Reflexion über positive Momente des Tages</li>
+                    </ol>
+                </div>
+                
+                <div class="cta">
+                    <h3>🚀 Bereit für die komplette Transformation?</h3>
+                    <p>Das <strong>10-Minuten-Fit Programm</strong> wurde exakt für Menschen wie Sie entwickelt. Wissenschaftlich fundiert, praxiserprobt und speziell für den hektischen Berufsalltag optimiert.</p>
+                    
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <strong>Was Sie erhalten:</strong><br>
+                        ✓ 6 strukturierte Module mit dem bewährten Fit-Impulse Code<br>
+                        ✓ Wissenschaftlich fundierte 10-Minuten Workouts<br>
+                        ✓ Praktische Cheatsheets für sofortige Umsetzung<br>
+                        ✓ Individuelle Anpassung an Ihren Alltag<br>
+                        ✓ Nachhaltige Ergebnisse ohne Fitnessstudio
+                    </div>
+                    
+                    <!-- Email Collection Form -->
+                    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" style="margin: 20px 0;">
+                        <input type="hidden" name="quiz_result" id="hiddenResult">
+                        <input type="hidden" name="quiz_score" id="hiddenScore">
+                        <input type="email" name="email" placeholder="Ihre E-Mail für den kostenlosen Aktionsplan" 
+                               style="width: 100%; padding: 12px; border: none; border-radius: 8px; margin-bottom: 10px; font-size: 16px;" required>
+                        <button type="submit" class="cta-button" style="width: 100%; border: none;">
+                            Kostenlosen Aktionsplan erhalten + 10-Minuten-Fit entdecken →
+                        </button>
+                    </form>
+                    
+                    <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.9;">
+                        <em>Spezialangebot für Audit-Teilnehmer: 30% Einführungsrabatt</em>
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('results').innerHTML = resultsHTML;
+            document.getElementById('results').classList.add('active');
+        }
+
+        // Event listeners for options
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('option')) {
+                const questionNumber = parseInt(e.target.closest('.question').dataset.question);
+                const value = e.target.dataset.value;
+                const score = parseInt(e.target.dataset.score);
+                selectOption(e.target, questionNumber, value, score);
+            }
+        });
+
+        // Initialize
+        showQuestion(1);
+    </script>
+</body>
+</html>
